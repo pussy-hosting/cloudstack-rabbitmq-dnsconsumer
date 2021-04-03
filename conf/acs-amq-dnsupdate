@@ -1,0 +1,27 @@
+# /etc/default/acs-amq-dnsupdate
+#
+# Configuration for acs-amq.dnsupdate.py
+#   commented values are build-in defaults.
+
+### AMQ Cosumer connection
+#
+#AMQ_USERNAME="guest"
+AMQ_USERNAME="guest"
+#AMQ_PASSWORD="guest"
+AMQ_PASSWORD="guest"
+#AMQ_HOSTNAME="localhost"
+AMQ_HOSTNAME="localhost"
+#AMQ_PORT="5672"
+AMQ_PORT="5672"
+#AMQ_EXCHANGE="cloudstack-events"
+AMQ_EXCHANGE="cloudstack-events"
+
+#### CloudStack API connection
+#
+#ACS_ENDPOINT="http://localhost:8080/client/api"
+ACS_ENDPOINT="http://localhost:8080/client/api"
+#ACS_APIKEY=""
+ACS_APIKEY=""
+#ACS_SECRETKEY=""
+ACS_SECRETKEY=""
+

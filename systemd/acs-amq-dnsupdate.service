@@ -1,0 +1,15 @@
+# /etc/systemd/system/acs-amq-dnsupdate.service
+[Unit]
+Description=DNSUpdate via CloudStack feeded AMQ.
+After=network.target
+
+[Service]
+EnvironmentFile=-/etc/default/acs-amq-dnsupdate
+Type=simple
+User=root
+ExecStart=/usr/local/bin/acs-amq-dnsupdate.py
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
+

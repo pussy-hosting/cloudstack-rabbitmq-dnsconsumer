@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+#
+# /usr/local/bin/acs-dnsupdate.py
+#
 import pika
 import json
 import sys
