@@ -1,7 +1,7 @@
 ## Message Flow
 
 ```
-cloudstack-management   ->  rabbitmq (see [1])
+cloudstack-management   ->  rabbitmq
                             exchange: cloudstack-events
                               ^             |
                             1.|register  2. |message
@@ -20,7 +20,7 @@ cloudstack-management   ->  rabbitmq (see [1])
                        |     |     `---> nsupdate add AAA
                        |     |     `---> nsupdate add PTR
                        |  DEL|
-                       |   4.|get VM hints from uuid.uuid.domain-zone
+                       |   4.|get VM hints from $uuid.uuid.domain-zone
                        |     `<----- nslookup
                     DEL|
                      5.|remove A, AAA, PTR and VM hints
@@ -30,4 +30,6 @@ cloudstack-management   ->  rabbitmq (see [1])
                        `----> nsupdate delete TXT ($uuid.uuid-domain-zone)
 ```
 
-[1]: http://docs.cloudstack.apache.org/en/latest/adminguide/events.html#amqp-configuration
+See also:
+[http://docs.cloudstack.apache.org/en/latest/adminguide/events.html#amqp-configuration]
+
