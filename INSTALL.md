@@ -7,7 +7,7 @@ published for. Cloudstack-management should also be configured for publishing ev
 via AMQP.
 See: [CloudStack AMQP Events](http://docs.cloudstack.apache.org/en/latest/adminguide/events.html#amqp-configuration)
 
-A running rabbitmq (single or clustered). Consider to firewall this, also the initial
+- A running rabbitmq (single or clustered). Consider to firewall this, also the initial
 guest-user should be replaced for obvious reasons.
 
 - An authoritative Nameserver (tested: bind9) for the DNS Zone(s) configured for the
