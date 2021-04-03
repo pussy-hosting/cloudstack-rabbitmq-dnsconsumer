@@ -1,11 +1,12 @@
-=== Message Flow
+## Message Flow
 
 ```
-cloudstack-management   ->  rabbitmq http://docs.cloudstack.apache.org/en/latest/adminguide/events.html#amqp-configuration
+cloudstack-management   ->  rabbitmq (see [1])
                             exchange: cloudstack-events
                               ^             |
                             1.|register  2. |message
-                              |queue        |management-server.AsyncJobEvent.complete.VirtualMachine.$uuid.VM.[DESTROY|CREATE]
+                              |queue        |management-server.AsyncJobEvent.complete.\
+                                            |             VirtualMachine.$uuid.VM.[DESTROY|CREATE]
                               |             |
                        .----acs-amq-dnsupdate.py
                        |     |     |    |   |
@@ -29,3 +30,4 @@ cloudstack-management   ->  rabbitmq http://docs.cloudstack.apache.org/en/latest
                        `----> nsupdate delete TXT ($uuid.uuid-domain-zone)
 ```
 
+[http://docs.cloudstack.apache.org/en/latest/adminguide/events.html#amqp-configuration](1)

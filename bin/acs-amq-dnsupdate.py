@@ -46,8 +46,6 @@ def main():
             routing_key='#',
             queue=queue_name)
 
-    print(' [*] Waiting for logs. To exit press CTRL+C')
-
     def callback(ch, method, properties, body):
 
         rklist = method.routing_key.split('.')
@@ -100,6 +98,8 @@ def main():
                             if validate_fqdn(hostname + '.' + domain):
                                 addrecords(uuid, hostname, domain, ipaddress, ip6address)
 
+    print('Listening for AMQ messages on amq://%s:%s/%s. To exit press CTRL+C' %
+            ( AMQ_HOSTNAME, AMQ_PORT, AMQ_EXCHANGE ))
     channel.basic_consume(callback,
             queue=queue_name,
             no_ack=True)
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
-        print('Interrupted')
+        print('Interrupted.')
         try:
             sys.exit(0)
         except SystemExit:
