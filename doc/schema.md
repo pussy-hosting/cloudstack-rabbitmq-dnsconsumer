@@ -30,4 +30,4 @@ cloudstack-management   ->  rabbitmq (see [1])
                        `----> nsupdate delete TXT ($uuid.uuid-domain-zone)
 ```
 
-[1]: http://docs.cloudstack.apache.org/en/latest/adminguide/events.html#amqp-configuration]
+[1]: http://docs.cloudstack.apache.org/en/latest/adminguide/events.html#amqp-configuration
