@@ -6,7 +6,7 @@ cloudstack-management   ->  rabbitmq
                               ^             |
                             1.|register  2. |message
                               |queue        |management-server.AsyncJobEvent.complete.\
-                                            |             VirtualMachine.$uuid.VM.[DESTROY|CREATE]
+                              |             |             VirtualMachine.$uuid.VM.[DESTROY|CREATE]
                               |             |
                        .----acs-amq-dnsupdate.py
                        |     |     |    |   |
