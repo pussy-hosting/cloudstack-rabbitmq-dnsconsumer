@@ -1,8 +1,8 @@
 ## Installation
 
-# Prerequisites
+### Prerequisites
 
-A running CloudStack setup, with at least one shared network, dns records should be
+- A running CloudStack setup, with at least one shared network, dns records should be
 published for. Cloudstack-management should also be configured for publishing events
 via AMQP.
 See: [CloudStack AMQP Events](http://docs.cloudstack.apache.org/en/latest/adminguide/events.html#amqp-configuration)
@@ -10,16 +10,16 @@ See: [CloudStack AMQP Events](http://docs.cloudstack.apache.org/en/latest/adming
 A running rabbitmq (single or clustered). Consider to firewall this, also the initial
 guest-user should be replaced for obvious reasons.
 
-An authoritative Nameserver (tested: bind9) for the DNS Zone(s) configured for the
+- An authoritative Nameserver (tested: bind9) for the DNS Zone(s) configured for the
 shared network(s).
 
-Possiblity to add/remove the respective A, AAAA, optinally PTR records via nsupdate.
-The [docs/preflight.md](docs/preflight.md) should cover this more specific.
+- The possiblity to add/remove the respective A, AAAA, optinally PTR records via nsupdate.
+The [doc/preflight.md](doc/preflight.md) should cover this more specific.
 
 ### Daemon setup
 
 That's the easist step. The daemon only glues messages and nsupdate together.
-See also [docs/schema.md](docs/schema.md).
+See also [doc/schema.md](doc/schema.md).
 
 ```
 git clone https://github.com/pussy-hosting/cloudstack-rabbitmq-dnsconsumer.git
