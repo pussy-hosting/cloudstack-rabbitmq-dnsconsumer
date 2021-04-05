@@ -48,7 +48,7 @@ def main():
     channel = connection.channel()
     result = channel.queue_declare(exclusive=True)
     queue_name = result.method.queue
-    channel.queue_bind(exchange=AMQ_EXCHANGE,
+    channel.queue_bind(exchange=param['AMQ_EXCHANGE'],
             routing_key='#',
             queue=queue_name)
 
