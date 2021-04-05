@@ -24,6 +24,7 @@ def main():
             'ACS_APIKEY': '',
             'ACS_SECRETKEY': '',
             'SQLITE_DB' : '/var/lib/acs-amq-dnsupdate.db',
+            'DNS_MAP': '/etc/acs-amq-dnsupdate.json',
             }
 
     for param_key, param_value in param.items():

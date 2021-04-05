@@ -1,0 +1,53 @@
+{
+  "tsigkeys": {
+    "cloudstack-internal": {
+      "secret": "c2VjcmV0dG9jaGFuZ2UK",
+      "algorithm": "HMAC-MD5",
+      "host": "ns1.p-h.berlin"
+    },
+    "cloudstack-external": {
+      "secret": "c2VjcmV0dG9jaGFuZ2UK",
+      "algorithm": "HMAC-MD5",
+      "host": "ns1.p-h.berlin"
+    }
+  },
+  "zones": {
+    "100.10.in-addr.arpa": [
+      {
+        "tsigkey": "cloudstack-internal",
+        "RR": [
+          "PTR"
+        ]
+      }
+    ],
+    "4.6.c.1.2.0.2.0.8.e.2.1.0.0.a.2.ip6.arpa": [
+      {
+        "tsigkey": "cloudstack-internal",
+        "RR": [
+          "PTR"
+        ]
+      },
+      {
+        "tsigkey": "cloudstack-external",
+        "RR": [
+          "PTR"
+        ]
+      }
+    ],
+    "v6-400.ber1.pussy-hosting.berlin": [
+      {
+        "tsigkey": "cloudstack-internal",
+        "RR": [
+          "A",
+          "AAAA"
+        ]
+      },
+      {
+        "tsigkey": "cloudstack-external",
+        "RR": [
+          "AAAA"
+        ]
+      }
+    ]
+  }
+}
