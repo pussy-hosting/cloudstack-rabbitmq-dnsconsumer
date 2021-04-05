@@ -80,7 +80,7 @@ def main():
                         cur = con.cursor()
                         cur.execute("SELECT vm_uuid,hostname,network_domain,network_uuid,a,aaaa FROM entries WHERE vm_uuid = '%s'" % uuid )
                         for row in cur:
-                            removerecords(row['vm_uuid'], row['hostname'], row['network_domain'], row['a'], row['aaaa'])
+                            removerecords(row[0], row[1], row[2], row[4], row[5])
                         cur.execute("DELETE FROM entries WHERE vm_uuid = '%s')" % uuid )
                         con.commit()
                         con.close()
