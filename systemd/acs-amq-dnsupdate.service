@@ -8,7 +8,7 @@ EnvironmentFile=-/etc/default/acs-amq-dnsupdate
 Type=simple
 User=root
 ExecStart=/usr/local/bin/acs-amq-dnsupdate.py
-Restart=on-abort
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
