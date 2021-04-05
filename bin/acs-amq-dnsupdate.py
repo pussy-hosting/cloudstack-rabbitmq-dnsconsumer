@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S python3 -u
 #
 # /usr/local/bin/acs-amq-dnsupdate.py
 #
@@ -6,6 +6,7 @@ import pika
 import json
 import sys
 import os
+import re
 import sqlite3
 # pip install cs # https://github.com/exoscale/cs
 from cs import CloudStack
@@ -117,7 +118,6 @@ def main():
                                     con.close()
                                     addrecords(uuid, hostname, domain, ipaddress, ip6address)
 
-    print('-------------------------------------------------------------------------')
     print('Listening for AMQ messages on amq://%s:%s/%s. To exit press CTRL+C' %
             (param['AMQ_HOSTNAME'], param['AMQ_PORT'], param['AMQ_EXCHANGE']))
     channel.basic_consume(callback,
