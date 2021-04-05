@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 #
-# /usr/local/bin/acs-dnsupdate.py
+# /usr/local/bin/acs-amq-dnsupdate.py
 #
 import pika
 import json
 import sys
 import os
+import sqlite3
 # pip install cs # https://github.com/exoscale/cs
 from cs import CloudStack
 
@@ -19,29 +20,34 @@ def main():
             'ACS_ENDPOINT': 'http://localhost:8080/client/api',
             'ACS_APIKEY': '',
             'ACS_SECRETKEY': '',
+            'SQLITE_DB' : '/var/lib/acs-amq-dnsupdate.db',
             }
 
     for param_key, param_value in param.items():
         if param_key in os.environ:
             param[param_key] = os.getenv(param_key)
 
-    cs = CloudStack(endpoint=ACS_ENDPOINT,
-            key=ACS_APIKEY,
-            secret=ACS_SECRETKEY)
+    cs = CloudStack(endpoint=param['ACS_ENDPOINT'],
+            key=param['ACS_APIKEY'],
+            secret=param['ACS_SECRETKEY'])
 
-    credentials = pika.PlainCredentials(AMQ_USERNAME, AMQ_PASSWORD)
-    parameters = pika.ConnectionParameters(AMQ_HOSTNAME,
-            int(AMQ_PORT),
+    con = sqlite3.connect(param['SQLITE_DB'])
+    cur = con.cursor()
+    cur.execute('''CREATE TABLE entries
+            (vm_uuid text, hostname text, network_domain text, network_uuid text, a text, aaaa text)''')
+    #cur.execute("INSERT INTO stocks VALUES ('2006-01-05','BUY','RHAT',100,35.14)")
+    con.commit()
+    con.close()
+
+    credentials = pika.PlainCredentials(param['AMQ_USERNAME'], param['AMQ_PASSWORD'])
+    parameters = pika.ConnectionParameters(param['AMQ_HOSTNAME'],
+            int(param['AMQ_PORT']),
             '/',
             credentials)
-
     connection = pika.BlockingConnection(parameters)
-
     channel = connection.channel()
-
     result = channel.queue_declare(exclusive=True)
     queue_name = result.method.queue
-
     channel.queue_bind(exchange=AMQ_EXCHANGE,
             routing_key='#',
             queue=queue_name)
@@ -69,7 +75,14 @@ def main():
                     # DESTROY
                     if (blist['commandEventType'] == 'VM.DESTROY'):
                         print('DESTROY VM WITH UUID: %s' % uuid)
-                        removerecords(uuid)
+                        con = sqlite3.connect(param['SQLITE_DB'])
+                        cur = con.cursor()
+                        cur.execute("SELECT vm_uuid,hostname,network_domain,network_uuid,a,aaaa FROM entries WHRE vm_uuid = '%s')" % uuid )
+                        for row in cur:
+                            removerecords(row['vm_uuid'], row['hostname'], row['network_domain'], row['a'], row['aaaa'])
+                        cur.execute("DELETE FROM entries WHRE vm_uuid = '%s')" % uuid )
+                        con.commit()
+                        con.close()
 
                     # CREATE
                     if (blist['commandEventType'] == 'VM.CREATE' and
@@ -95,8 +108,14 @@ def main():
                                         network = networks[0]
                                         if ('networkdomain' in network):
                                             domain = network['networkdomain']
-                            if validate_fqdn(hostname + '.' + domain):
-                                addrecords(uuid, hostname, domain, ipaddress, ip6address)
+                                if validate_fqdn(hostname + '.' + domain):
+                                    con = sqlite3.connect(param['SQLITE_DB'])
+                                    cur = con.cursor()
+                                    cur.execute("INSERT INTO entries VALUES ('%s','%s','%s','%s','%s','%s')" %
+                                            (uuid, hostname, domain, networkid, ipaddress, ip6address))
+                                    con.commit()
+                                    con.close()
+                                    addrecords(uuid, hostname, domain, ipaddress, ip6address)
 
     print('Listening for AMQ messages on amq://%s:%s/%s. To exit press CTRL+C' %
             ( AMQ_HOSTNAME, AMQ_PORT, AMQ_EXCHANGE ))
@@ -115,8 +134,8 @@ def validate_fqdn(dn):
     return all(ldh_re.match(x) for x in dn.split('.'))
 
 # Remove Nameserver Records
-def removerecords(uuid=''):
-    print('Remove records for VM. uuid=%s' % uuid)
+def removerecords(uuid='', hostname='', domain='', ipaddress='', ip6address=''):
+    print('Remove records for VM. uuid=%s, hostname=%s, domain=%s, ipaddress=%s, ip6address=%s' % (uuid, hostname, domain, ipaddress, ip6address))
 
 # Add Nameserver Records
 def addrecords(uuid='', hostname='', domain='', ipaddress='', ip6address=''):
