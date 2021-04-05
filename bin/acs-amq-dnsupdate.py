@@ -8,6 +8,8 @@ import sys
 import os
 import re
 import sqlite3
+import dns.tsigkeyring
+import dns.update
 # pip install cs # https://github.com/exoscale/cs
 from cs import CloudStack
 
