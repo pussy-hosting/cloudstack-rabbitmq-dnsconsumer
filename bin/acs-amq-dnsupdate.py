@@ -33,7 +33,7 @@ def main():
 
     con = sqlite3.connect(param['SQLITE_DB'])
     cur = con.cursor()
-    cur.execute('''CREATE TABLE entries
+    cur.execute('''CREATE TABLE IF NOT EXISTS entries
             (vm_uuid text, hostname text, network_domain text, network_uuid text, a text, aaaa text)''')
     #cur.execute("INSERT INTO stocks VALUES ('2006-01-05','BUY','RHAT',100,35.14)")
     con.commit()
