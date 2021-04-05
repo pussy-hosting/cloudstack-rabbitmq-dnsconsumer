@@ -54,9 +54,7 @@ def main():
             queue=queue_name)
 
     def callback(ch, method, properties, body):
-
         rklist = method.routing_key.split('.')
-
         #management-server.AsyncJobEvent.complete.VirtualMachine.bc1475fd-b1bc-41be-9766-29e46a830729
         if (rklist[0] == 'management-server' and
             rklist[1] == 'AsyncJobEvent' and
@@ -76,14 +74,17 @@ def main():
                     # DESTROY
                     if (blist['commandEventType'] == 'VM.DESTROY'):
                         print('DESTROY VM WITH UUID: %s' % uuid)
-                        con = sqlite3.connect(param['SQLITE_DB'])
-                        cur = con.cursor()
-                        cur.execute("SELECT vm_uuid,hostname,network_domain,network_uuid,a,aaaa FROM entries WHERE vm_uuid = '%s'" % uuid )
-                        for row in cur:
-                            removerecords(row[0], row[1], row[2], row[4], row[5])
-                        cur.execute("DELETE FROM entries WHERE vm_uuid = '%s')" % uuid )
-                        con.commit()
-                        con.close()
+                        try:
+                            con = sqlite3.connect(param['SQLITE_DB'])
+                            cur = con.cursor()
+                            cur.execute("SELECT vm_uuid,hostname,network_domain,network_uuid,a,aaaa FROM entries WHERE vm_uuid = '%s'" % uuid )
+                            for row in cur:
+                                removerecords(row[0], row[1], row[2], row[4], row[5])
+                            cur.execute("DELETE FROM entries WHERE vm_uuid = '%s'" % uuid )
+                            con.commit()
+                            con.close()
+                        except:
+                            print('[ERROR] Unable to remove records for UUID: %s' % uuid)
 
                     # CREATE
                     if (blist['commandEventType'] == 'VM.CREATE' and
@@ -110,13 +111,18 @@ def main():
                                         if ('networkdomain' in network):
                                             domain = network['networkdomain']
                                 if validate_fqdn(hostname + '.' + domain):
-                                    con = sqlite3.connect(param['SQLITE_DB'])
-                                    cur = con.cursor()
-                                    cur.execute("INSERT INTO entries VALUES ('%s','%s','%s','%s','%s','%s')" %
-                                            (uuid, hostname, domain, nic['networkid'], ipaddress, ip6address))
-                                    con.commit()
-                                    con.close()
-                                    addrecords(uuid, hostname, domain, ipaddress, ip6address)
+                                    try:
+                                        con = sqlite3.connect(param['SQLITE_DB'])
+                                        cur = con.cursor()
+                                        cur.execute("INSERT INTO entries VALUES ('%s','%s','%s','%s','%s','%s')" %
+                                                (uuid, hostname, domain, nic['networkid'], ipaddress, ip6address))
+                                        con.commit()
+                                        con.close()
+                                        addrecords(uuid, hostname, domain, ipaddress, ip6address)
+                                    except:
+                                        print('[ERROR] Unable to add records for UUID: %s' % uuid)
+                                else:
+                                    print('[ERROR] FQDN does not validate. Not adding records ro UUID: %s' % uuid)
 
     print('Listening for AMQ messages on amq://%s:%s/%s. To exit press CTRL+C' %
             (param['AMQ_HOSTNAME'], param['AMQ_PORT'], param['AMQ_EXCHANGE']))
