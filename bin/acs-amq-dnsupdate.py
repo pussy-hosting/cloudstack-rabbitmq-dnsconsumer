@@ -78,7 +78,7 @@ def main():
                         print('DESTROY VM WITH UUID: %s' % uuid)
                         con = sqlite3.connect(param['SQLITE_DB'])
                         cur = con.cursor()
-                        cur.execute("SELECT vm_uuid,hostname,network_domain,network_uuid,a,aaaa FROM entries WHRE vm_uuid = '%s')" % uuid )
+                        cur.execute("SELECT vm_uuid,hostname,network_domain,network_uuid,a,aaaa FROM entries WHERE vm_uuid = '%s'" % uuid )
                         for row in cur:
                             removerecords(row['vm_uuid'], row['hostname'], row['network_domain'], row['a'], row['aaaa'])
                         cur.execute("DELETE FROM entries WHRE vm_uuid = '%s')" % uuid )
@@ -113,7 +113,7 @@ def main():
                                     con = sqlite3.connect(param['SQLITE_DB'])
                                     cur = con.cursor()
                                     cur.execute("INSERT INTO entries VALUES ('%s','%s','%s','%s','%s','%s')" %
-                                            (uuid, hostname, domain, networkid, ipaddress, ip6address))
+                                            (uuid, hostname, domain, nic['networkid'], ipaddress, ip6address))
                                     con.commit()
                                     con.close()
                                     addrecords(uuid, hostname, domain, ipaddress, ip6address)
