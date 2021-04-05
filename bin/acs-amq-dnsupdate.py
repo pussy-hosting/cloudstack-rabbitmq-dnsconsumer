@@ -118,7 +118,7 @@ def main():
                                     addrecords(uuid, hostname, domain, ipaddress, ip6address)
 
     print('Listening for AMQ messages on amq://%s:%s/%s. To exit press CTRL+C' %
-            ( AMQ_HOSTNAME, AMQ_PORT, AMQ_EXCHANGE ))
+            (param['AMQ_HOSTNAME'], param['AMQ_PORT'], param['AMQ_EXCHANGE']))
     channel.basic_consume(callback,
             queue=queue_name,
             no_ack=True)
