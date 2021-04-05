@@ -25,3 +25,8 @@ ACS_APIKEY=""
 #ACS_SECRETKEY=""
 ACS_SECRETKEY=""
 
+# SQLite Database File
+#
+#SQLITE_DB="/var/lib/acs-amq-dnsupdate.db"
+SQLITE_DB="/var/lib/acs-amq-dnsupdate.db"
+
