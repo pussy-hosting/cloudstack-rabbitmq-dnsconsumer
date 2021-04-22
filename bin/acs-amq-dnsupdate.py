@@ -10,8 +10,11 @@ import re
 import sqlite3
 import dns.tsigkeyring
 import dns.update
+import ipaddress
 # pip install cs # https://github.com/exoscale/cs
 from cs import CloudStack
+
+global dns_map
 
 def main():
     param = {
@@ -30,6 +33,8 @@ def main():
     for param_key, param_value in param.items():
         if param_key in os.environ:
             param[param_key] = os.getenv(param_key)
+
+    dns_map = param['DNS_MAP']
 
     cs = CloudStack(endpoint=param['ACS_ENDPOINT'],
             key=param['ACS_APIKEY'],
@@ -135,6 +140,15 @@ def main():
 
     channel.start_consuming()
 
+def dnscfg():
+    try:
+        with open(dns_map) as json_file:
+            cfg = json.load(json_file)
+    except:
+        print('[ERROR] Unable to parse DNS Configuration from %s.' % dns_map)
+        cfg = {'tsigkeys': {}, 'zones': {}, }
+    return cfg
+
 def validate_fqdn(dn):
     if dn.endswith('.'):
         dn = dn[:-1]
@@ -143,14 +157,53 @@ def validate_fqdn(dn):
     ldh_re = re.compile('^[a-z0-9-]{2,63}$', re.IGNORECASE)
     return all(ldh_re.match(x) for x in dn.split('.'))
 
+# get hardcoded /64 DNS PTR Zone from IPv6
+def ptr6zone64(self):
+    reverse_chars = self.exploded[::-1].replace(':', '')
+    rev64 = reverse_chars[-16:]
+    return '.'.join(rev64) + '.ip6.arpa'
+
+# get hardcoded /16 DNS PTR Zone for IPv4
+def ptr4zone24(self):
+    list=self.split('.')
+    del list[0:2]
+    return list.join('.')
+
 # Remove Nameserver Records
 def removerecords(uuid='', hostname='', domain='', ipaddress='', ip6address=''):
     print('Remove records for VM. uuid=%s, hostname=%s, domain=%s, ipaddress=%s, ip6address=%s' % (uuid, hostname, domain, ipaddress, ip6address))
+    ip6 = ipaddress.ip_address(ip6address)
+    ptr6zone = ptr6zone64(ip6)
+    ip4 = ipaddress.ip_address(ipaddress)
+    ptr4zone = ptr4zone24(ipv4.reverse_pointer)
+    cfg = dnscfg()
+    for zone in [ domain, ptr4zone, ptr6zone ]:
+        if zone in cfg['zones']:
+            for arhash in cfg['zones'][zone]:
+                if ('tsigkey' in arhash) and (arhash['tsigkey'] in cfg['tsigkeys']):
+                    tsighash = cfg['tsigkeys'][arhash['tsigkey']]
+                    if 'RR' in arhash:
+                        for rrs in arhash['RR']:
+                            print('remove %s record for %host in zone %s' % (rrs, hostname, zone))
 
 # Add Nameserver Records
 def addrecords(uuid='', hostname='', domain='', ipaddress='', ip6address=''):
     print('Add records for VM. uuid=%s, hostname=%s, domain=%s, ipaddress=%s, ip6address=%s' % (uuid, hostname, domain, ipaddress, ip6address))
+    ip6 = ipaddress.ip_address(ip6address)
+    ptr6zone = ptr6zone64(ip6)
+    ip4 = ipaddress.ip_address(ipaddress)
+    ptr4zone = ptr4zone24(ipv4.reverse_pointer)
+    cfg = dnscfg()
+    for zone in [ domain, ptr4zone, ptr6zone ]:
+        if zone in cfg['zones']:
+            for arhash in cfg['zones'][zone]:
+                if ('tsigkey' in arhash) and (arhash['tsigkey'] in cfg['tsigkeys']):
+                    tsighash = cfg['tsigkeys'][arhash['tsigkey']]
+                    if 'RR' in arhash:
+                        for rrs in arhash['RR']:
+                            print('add %s record for %host in zone %s' % (rrs, hostname, zone))
 
+#
 if __name__ == '__main__':
     try:
         main()
