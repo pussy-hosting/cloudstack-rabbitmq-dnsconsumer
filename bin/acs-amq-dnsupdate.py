@@ -193,7 +193,9 @@ def addrecords(uuid='', hostname='', domain='', ipaddress='', ip6address=''):
     ptr6zone = ptr6zone64(ip6)
     ip4 = ipaddress.ip_address(ipaddress)
     ptr4zone = ptr4zone24(ipv4.reverse_pointer)
+    print('Zones: domain: %s, ptr4zone: %s, ptr6zone: %s' % (domain, ptr4zone, ptr6zone))
     cfg = dnscfg()
+    print('%r' % cfg)
     for zone in [ domain, ptr4zone, ptr6zone ]:
         if zone in cfg['zones']:
             for arhash in cfg['zones'][zone]:
