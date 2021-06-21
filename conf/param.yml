@@ -1,0 +1,11 @@
+---
+AMQ_USERNAME: 'guest'
+AMQ_PASSWORD: 'guest'
+AMQ_HOSTNAME: 'localhost'
+AMQ_PORT: '5672'
+AMQ_EXCHANGE: 'cloudstack-events'
+ACS_ENDPOINT: 'http://localhost:8080/client/api'
+ACS_APIKEY: ''
+ACS_SECRETKEY: ''
+SQLITE_DB' : '/var/lib/acs-amq-dnsupdate.db'
+DNS_MAP: '/etc/acs-amq-dnsupdate.json'
