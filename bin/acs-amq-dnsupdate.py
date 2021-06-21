@@ -14,21 +14,19 @@ import ipaddress
 # pip install cs # https://github.com/exoscale/cs
 from cs import CloudStack
 
+import yaml
+import logging
+
 global dns_map
 
 def main():
-    param = {
-            'AMQ_USERNAME': 'guest',
-            'AMQ_PASSWORD': 'guest',
-            'AMQ_HOSTNAME': 'localhost',
-            'AMQ_PORT': '5672',
-            'AMQ_EXCHANGE': 'cloudstack-events',
-            'ACS_ENDPOINT': 'http://localhost:8080/client/api',
-            'ACS_APIKEY': '',
-            'ACS_SECRETKEY': '',
-            'SQLITE_DB' : '/var/lib/acs-amq-dnsupdate.db',
-            'DNS_MAP': '/etc/acs-amq-dnsupdate.json',
-            }
+    
+    work_dir = os.path.abspath(os.getcwd())
+
+    logging.basicConfig(filename=f'{work_dir}/log/dnsupdate.log', encoding='utf-8', level=logging.DEBUG)
+
+    with open(f'{work_dir}/conf/param.yml') as f:
+        param = yaml.safe_load(f)
 
     for param_key, param_value in param.items():
         if param_key in os.environ:
@@ -92,7 +90,8 @@ def main():
                             con.commit()
                             con.close()
                         except:
-                            print('[ERROR] Unable to remove records for UUID: %s' % uuid)
+                            print(f'[ERROR] Unable to remove records for UUID: {uuid}')
+                            logging.error(f'Unable to remove records for UUID: {uuid}')
 
                     # CREATE
                     if (blist['commandEventType'] == 'VM.CREATE' and
@@ -128,9 +127,11 @@ def main():
                                         con.close()
                                         addrecords(uuid, hostname, domain, ipaddress, ip6address)
                                     except:
-                                        print('[ERROR] Unable to add records for UUID: %s' % uuid)
+                                        print(f'[ERROR] Unable to add records for UUID: {uuid}')
+                                        logging.error(f'Unable to add records for UUID: {uuid}')
                                 else:
-                                    print('[ERROR] FQDN does not validate. Not adding records ro UUID: %s' % uuid)
+                                    print(f'[ERROR] FQDN does not validate. Not adding records ro UUID: {uuid}')
+                                    logging.error(f'FQDN does not validate. Not adding records ro UUID: {uuid}')
 
     print('Listening for AMQ messages on amq://%s:%s/%s. To exit press CTRL+C' %
             (param['AMQ_HOSTNAME'], param['AMQ_PORT'], param['AMQ_EXCHANGE']))
@@ -145,7 +146,9 @@ def dnscfg():
         with open(dns_map) as json_file:
             cfg = json.load(json_file)
     except:
-        print('[ERROR] Unable to parse DNS Configuration from %s.' % dns_map)
+        print(f'[ERROR] Unable to parse DNS Configuration from {dns_map}.')
+        logging.error(f'Unable to parse DNS Configuration from {dns_map}.')
+        
         cfg = {'tsigkeys': {}, 'zones': {}, }
     return cfg
 
@@ -171,7 +174,9 @@ def ptr4zone24(self):
 
 # Remove Nameserver Records
 def removerecords(uuid='', hostname='', domain='', ipaddress='', ip6address=''):
-    print('Remove records for VM. uuid=%s, hostname=%s, domain=%s, ipaddress=%s, ip6address=%s' % (uuid, hostname, domain, ipaddress, ip6address))
+    print(f'Remove records for VM. uuid={uuid}, hostname={hostname}, domain={domain}, ipaddress={ipaddress}, ip6address={ip6address}')
+    logging.info(f'Remove records for VM. uuid={uuid}, hostname={hostname}, domain={domain}, ipaddress={ipaddress}, ip6address={ip6address}')
+
     ip6 = ipaddress.ip_address(ip6address)
     ptr6zone = ptr6zone64(ip6)
     ip4 = ipaddress.ip_address(ipaddress)
@@ -184,11 +189,15 @@ def removerecords(uuid='', hostname='', domain='', ipaddress='', ip6address=''):
                     tsighash = cfg['tsigkeys'][arhash['tsigkey']]
                     if 'RR' in arhash:
                         for rrs in arhash['RR']:
-                            print('remove %s record for %host in zone %s' % (rrs, hostname, zone))
+                            print(f'remove {rrs} record for {hostname} in zone {zone}')
+                            logging.info(f'remove {rrs} record for {hostname} in zone {zone}')
+
 
 # Add Nameserver Records
 def addrecords(uuid='', hostname='', domain='', ipaddress='', ip6address=''):
     print('Add records for VM. uuid=%s, hostname=%s, domain=%s, ipaddress=%s, ip6address=%s' % (uuid, hostname, domain, ipaddress, ip6address))
+    logging.info(f'ADD records for VM. uuid={uuid}, hostname={hostname}, domain={domain}, ipaddress={ipaddress}, ip6address={ip6address}')
+
     ip6 = ipaddress.ip_address(ip6address)
     ptr6zone = ptr6zone64(ip6)
     ip4 = ipaddress.ip_address(ipaddress)
@@ -204,6 +213,7 @@ def addrecords(uuid='', hostname='', domain='', ipaddress='', ip6address=''):
                     if 'RR' in arhash:
                         for rrs in arhash['RR']:
                             print('add %s record for %host in zone %s' % (rrs, hostname, zone))
+                            logging.info(f'remove {rrs} record for {hostname} in zone {zone}')
 
 #
 if __name__ == '__main__':
