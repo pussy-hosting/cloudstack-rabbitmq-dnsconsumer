@@ -2,7 +2,7 @@
 
 ### Preflight / Preparation DNS
 
-The file [/etc/cs-amq-update.json](conf/acs-amq-update.json) contains the following setup as an example
+The file [/etc/acs-amq-update.json](../conf/acs-amq-update.json) contains the following setup as an example
   and a starting point for real configuration.
 
 Assumed is a Primary Nameserver for the given Zones,
@@ -19,12 +19,15 @@ The desired setup provides IPv4 and IPv6 for the local networks,
 
 #### Zones:
 - 100.10.in-addr.arpa
+
     as an RFC1918-Zone, only exists in Internal.
     Referenced by "cloudstack-internal" TSIGKEY
 - 4.6.c.1.2.0.2.0.8.e.2.1.0.0.a.2.ip6.arpa
+
     exists in Internal *and* External View.
     Each referenced by the respective TSIGKEY.
 - v6-400.ber1.pussy-hosting.berlin
+
     exists in Internal *and* External View.
     Referenced for A and AAAA by "cloudstack-internal",
       only for AAAA by "cloudstack-external".
