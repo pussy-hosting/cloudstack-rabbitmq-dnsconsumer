@@ -1,8 +1,8 @@
-## Instalation
+## Installation
 
 ### Preflight / Preparation DNS
 
-The file [/etc/acs-amq-update.json](../conf/acs-amq-update.json) contains the following setup as an example
+The file [/etc/acs-amq-dnsupdate.json](../conf/acs-amq-dnsupdate.json) contains the following setup as an example
   and a starting point for real configuration.
 
 Assumed is a Primary Nameserver for the given Zones,
@@ -10,7 +10,7 @@ Assumed is a Primary Nameserver for the given Zones,
 
 Assumed is also a Cloudstack Shared Network with
   following Definition:
-    
+
     - IPv4: 10.100.0.0/16
     - IPv6: 2a00:12e8:202:1c64::/64
     - Domainname: v6-400.ber1.pussy-hosting.berlin

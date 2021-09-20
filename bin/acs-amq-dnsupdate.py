@@ -261,7 +261,7 @@ def dnscfg():
         with open(dns_map) as json_file:
             cfg = json.load(json_file)
     except:
-        logger.error('Unable to parse DNS Configuration from {dns_map}')
+        logger.error(f'Unable to parse DNS Configuration from {dns_map}')
         cfg = {'tsigkeys': {}, 'zones': {} }
     return cfg
 
@@ -283,7 +283,6 @@ def ptr6host64(ip6rev):
     list = ip6rev.split('.')
     del list [16:] # 16 elements equals /64
     return '.'.join(list)
-
 
 # get hardcoded /16 DNS PTR Zone for IPv4
 def ptr4zone16(ipvrev):
