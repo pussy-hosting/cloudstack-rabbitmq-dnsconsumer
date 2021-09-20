@@ -2,7 +2,7 @@
 
 With names like **cloudstack-rabbitmq-dnsconsumer** or **acs-amq-dnsupdate** it aims for the badest project name on github.
 
-### What it's useful for?
+### What is it useful for?
 
 It's a simple but efficient **glue** between [Apache CloudStack](https://cloudstack.apache.org/) RabbitMQ and Nameservers with nsupdate/[RFC 2136](https://www.rfc-editor.org/info/rfc2136)-capabilities.
 
