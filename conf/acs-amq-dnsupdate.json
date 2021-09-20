@@ -1,12 +1,12 @@
 {
   "tsigkeys": {
     "cloudstack-internal": {
-      "secret": "c2VjcmV0dG9jaGFuZ2UK",
+      "secret": "<SECRET>",
       "algorithm": "HMAC-MD5",
       "host": "ns1.p-h.berlin"
     },
     "cloudstack-external": {
-      "secret": "c2VjcmV0dG9jaGFuZ2UK",
+      "secret": "<SECRET>",
       "algorithm": "HMAC-MD5",
       "host": "ns1.p-h.berlin"
     }
