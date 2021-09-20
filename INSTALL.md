@@ -6,9 +6,9 @@
 published for. Cloudstack-management should also be configured for publishing events
 via AMQP.
 See: [CloudStack AMQP Events](http://docs.cloudstack.apache.org/en/latest/adminguide/events.html#amqp-configuration)
-The [doc/envvars.md](doc/envvars.md) covers the environment variables for configuring the CloudStack and rabbitmq bindings.
+The [doc/envvars.md](doc/envvars.md) covers the environment variables for configuring the CloudStack and RabbitMQ bindings.
 
-- A running rabbitmq (single or clustered). Consider to firewall this, also the initial
+- A running RabbitMQ (single or clustered). Consider to firewall this, also the initial
 guest-user should be replaced for obvious reasons.
 
 - An authoritative Nameserver (tested: bind9) for the DNS Zone(s) configured for the
