@@ -2,6 +2,10 @@
 #
 # /usr/local/bin/acs-amq-dnsupdate.py
 #
+# Fixed network-layout is assumed:
+#   IPv6 are assumed to be /64
+#   IPv4 are assumed to be /16
+#
 import pika
 import json
 import sys
@@ -306,7 +310,7 @@ def removerecords(uuid='', hostname='', domain='', ip4address='', ip6address='')
         ptr6host = ptr6host64(ip6rev)
         hasv6 = True
     else:
-        ptr4zone = ''
+        ptr6zone = ''
         hasv6 = False
     if ip4address != '':
         ip4 = ipaddress.ip_address(ip4address)
@@ -315,7 +319,7 @@ def removerecords(uuid='', hostname='', domain='', ip4address='', ip6address='')
         ptr4host = ptr4host16(ip4rev)
         hasv4 = True
     else:
-        ptr6zone = ''
+        ptr4zone = ''
         hasv4 = False
     cfg = dnscfg()
     for zone in [ domain, ptr4zone, ptr6zone ]:
@@ -334,7 +338,7 @@ def removerecords(uuid='', hostname='', domain='', ip4address='', ip6address='')
                                 update.delete(hostname.lower(), 'a', ip4address)
                                 response = dns.query.tcp(update, tsighash['host'])
                             elif rr == 'aaaa' and domain != '' and hasv6 == True:
-                                logger.info('Remove A record for %s in zone %s (tsigkey: %s)' % ( hostname.lower(), zone, arhash['tsigkey']))
+                                logger.info('Remove AAAA record for %s in zone %s (tsigkey: %s)' % ( hostname.lower(), zone, arhash['tsigkey']))
                                 update = dns.update.Update(domain.lower(), keyring=keyring)
                                 update.delete(hostname.lower(), 'aaaa', ip6address)
                                 response = dns.query.tcp(update, tsighash['host'])
@@ -361,7 +365,7 @@ def addrecords(uuid='', hostname='', domain='', ip4address='', ip6address=''):
         ptr6host = ptr6host64(ip6rev)
         hasv6 = True
     else:
-        ptr4zone = ''
+        ptr6zone = ''
         hasv6 = False
     if ip4address != '':
         ip4 = ipaddress.ip_address(ip4address)
@@ -370,7 +374,7 @@ def addrecords(uuid='', hostname='', domain='', ip4address='', ip6address=''):
         ptr4host = ptr4host16(ip4rev)
         hasv4 = True
     else:
-        ptr6zone = ''
+        ptr4zone = ''
         hasv4 = False
     cfg = dnscfg()
     for zone in [ domain, ptr4zone, ptr6zone ]:
@@ -389,7 +393,7 @@ def addrecords(uuid='', hostname='', domain='', ip4address='', ip6address=''):
                                 update.replace(hostname.lower(), 300, 'a', ip4address)
                                 response = dns.query.tcp(update, tsighash['host'])
                             elif rr == 'aaaa' and domain != '' and hasv6 == True:
-                                logger.info('Add A record for %s in zone %s (tsigkey: %s)' % ( hostname.lower(), zone, arhash['tsigkey']))
+                                logger.info('Add AAAA record for %s in zone %s (tsigkey: %s)' % ( hostname.lower(), zone, arhash['tsigkey']))
                                 update = dns.update.Update(domain.lower(), keyring=keyring)
                                 update.replace(hostname.lower(), 300, 'aaaa', ip6address)
                                 response = dns.query.tcp(update, tsighash['host'])
