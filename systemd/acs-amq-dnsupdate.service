@@ -1,14 +1,16 @@
-# /etc/systemd/system/acs-amq-dnsupdate.service
 [Unit]
 Description=DNSUpdate via CloudStack feeded AMQ.
 After=network.target
+Wants=rabbitmq-server.service
+StartLimitIntervalSec=0
 
 [Service]
 EnvironmentFile=-/etc/default/acs-amq-dnsupdate
 Type=simple
 User=root
 ExecStart=/usr/local/bin/acs-amq-dnsupdate.py
-Restart=on-failure
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
