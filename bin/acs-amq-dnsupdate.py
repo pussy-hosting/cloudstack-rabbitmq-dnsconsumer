@@ -199,6 +199,8 @@ def main():
                         con.commit()
                         con.close()
                     except:
+                        if logger.level == logging.DEBUG:
+                            raise
                         logger.error(f'Unable to remove records for UUID: {uuid}')
 
                 # CREATE
@@ -244,6 +246,8 @@ def main():
                                         logger.debug(f'Try to nsupdate for UUID: {uuid}')
                                         addrecords(uuid, hostname, domain, ip4address, ip6address)
                                     except:
+                                        if logger.level == logging.DEBUG:
+                                            raise
                                         logger.error(f'Unable to nsupdate records for UUID: {uuid}')
                                 except:
                                     logger.error(f'Unable to add records for UUID: {uuid}')
