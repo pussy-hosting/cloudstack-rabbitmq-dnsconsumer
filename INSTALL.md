@@ -28,7 +28,15 @@ apt install python3-dnspython
 # pip3 install pip # unsure, if necessary
 pip install cs
 pip install logging
+pip install pika
 ```
+
+--
+**NOTE**
+
+Pika Version > 1.x is required
+
+--
 
 ```
 git clone https://github.com/pussy-hosting/cloudstack-rabbitmq-dnsconsumer.git
