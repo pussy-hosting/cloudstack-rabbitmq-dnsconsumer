@@ -1,4 +1,5 @@
 #!/usr/bin/env -S python3 -u
+# -*- coding: utf-8 -*-
 #
 # /usr/local/bin/acs-amq-dnsupdate.py
 #
@@ -424,4 +425,6 @@ if __name__ == '__main__':
             sys.exit(0)
         except SystemExit:
             os._exit(0)
+
+# vim: set et ts=4 sw=4:
 

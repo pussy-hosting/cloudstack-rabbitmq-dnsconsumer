@@ -8,6 +8,36 @@ It's a simple but efficient **glue** between [Apache CloudStack](https://cloudst
 
 It's able of adding, modifying and removing A, AAAA and PTR ressource-records on behalf of creating, editing or destroying VirtualMachines in CloudStack.
 
+### Schematics
+
+```
+---------------------
+| apache cloudstack | <- VM creation, modification, removal
+---------------------
+         ||
+     (rabbitMQ)
+         \/
+---------------------
+| rabbitMQ exchange |
+---------------------
+         ||
+     (rabbitMQ)
+         \/
+---------------------
+| acs-amq-dnsupdate | <- (DNS TSIG and Zones YAML configuration)
+---------------------
+         ||
+     (RFC2136)
+         \/
+---------------------
+| authoritative \   |
+|         nameserver
+---------------------
+```
+
+For this particular configuration example, we assume that the primary network is a [http://docs.cloudstack.apache.org/en/latest/adminguide/networking/advanced_zone_config.html#configuring-a-shared-guest-network] (CloudStack Shared Network). The network is configured as a dualstack VLAN with [https://www.rfc-editor.org/info/rfc1918](IPv4 RFC 1918)- and IPv6 public-addresses. It's DNS name shoud be identical to a (sub)domain delegated to an authoritative nameserver which needs to be accept Zone Updates via TSIG authentication. For this example, we publish IPv6 AAAA and IPv6 PTR to the public and private views of a split-horizon DNS (public./.internal), but to expose private IPv4 addresses (and their PTR counterpart) only to the private view.
+See: [conf/acs-amq-dnsupdate.json](conf/acs-amq-dnsupdate.json)
+
 ### How is it done?
 
 **acs-amq-dnsupdate** registers to an RabbitMQ Exchange for cloudstack-events. If getting notified due to VM.CREATE, VM.MODIFY or VM.DESTROY messages, it subsequently verifies and completes the VM information via CloudStack API calls, and finally builds nsupdate queries based on a configuration matrix. A sqlite-db was added to get stateful sets.
