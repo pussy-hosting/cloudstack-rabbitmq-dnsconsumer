@@ -35,7 +35,7 @@ It's able of adding, modifying and removing A, AAAA and PTR ressource-records on
 ---------------------
 ```
 
-For this particular configuration example, we assume that the primary network is a [http://docs.cloudstack.apache.org/en/latest/adminguide/networking/advanced_zone_config.html#configuring-a-shared-guest-network] (CloudStack Shared Network). The network is configured as a dualstack VLAN with [https://www.rfc-editor.org/info/rfc1918](IPv4 RFC 1918)- and IPv6 public-addresses. It's DNS name shoud be identical to a (sub)domain delegated to an authoritative nameserver which needs to be accept Zone Updates via TSIG authentication. For this example, we publish IPv6 AAAA and IPv6 PTR to the public and private views of a split-horizon DNS (public./.internal), but to expose private IPv4 addresses (and their PTR counterpart) only to the private view.
+For this particular configuration example, we assume that the primary network is a [Cloudstack Shared Network](http://docs.cloudstack.apache.org/en/latest/adminguide/networking/advanced_zone_config.html#configuring-a-shared-guest-network). The network is configured as a dualstack VLAN with [IPv4 RFC 1918](https://www.rfc-editor.org/info/rfc1918)- and IPv6 public-addresses. It's DNS name shoud be identical to a (sub)domain delegated to an authoritative nameserver which needs to be accept Zone Updates via TSIG authentication. For this example, we publish IPv6 AAAA and IPv6 PTR to the public and private views of a split-horizon DNS (public./.internal), but to expose private IPv4 addresses (and their PTR counterpart) only to the private view.
 See: [conf/acs-amq-dnsupdate.json](conf/acs-amq-dnsupdate.json)
 
 ### How is it done?
