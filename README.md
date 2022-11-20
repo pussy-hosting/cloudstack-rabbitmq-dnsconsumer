@@ -24,7 +24,7 @@ It's able of adding, modifying and removing A, AAAA and PTR ressource-records on
      (rabbitMQ)
          \/
 ---------------------
-| acs-amq-dnsupdate | <- (DNS TSIG and Zones YAML configuration)
+| acs-amq-dnsupdate | <- (DNS TSIG and Zones JSON configuration)
 ---------------------\
          ||           \----------------------
      (RFC2136)        | SQLite stateful set |
@@ -39,10 +39,34 @@ For this particular configuration example, we assume that the primary network is
 
 See: [/etc/acs-amq-dnsupdate.json](conf/acs-amq-dnsupdate.json)
 
-As an easy example, we install a RabbitMQ-Server locally. Apache CloudStack needs to be configured to use (http://docs.cloudstack.apache.org/en/latest/adminguide/events.html)[AMQP/RabbitMQ].
+As an easy example, we install a RabbitMQ-Server locally. Apache CloudStack needs to be configured to use [AMP/RabbitMQ](http://docs.cloudstack.apache.org/en/latest/adminguide/events.html).
 We're using the very same property values in our example:
 
 See: [/etc/default/acs-amq-dnsupdate](conf/acs-amq-dnsupdate)
+
+For your convenience, here's a systemd-unitfile and a small setup "script" which matches the bespoken example:
+
+See: [/etc/systemd/system/acs-amq-dnsupdate.service](blob/main/systemd/acs-amq-dnsupdate.service)
+
+See: *use it as hint and handle with care :)*
+```
+sudo -i
+apt install python3-pika rabbitmq-server
+pip3 install cs # https://github.com/exoscale/cs
+cd /usr/local/src
+git clone https://github.com/pussy-hosting/cloudstack-rabbitmq-dnsconsumer.git
+install --mode=0755 --owner=root --group=root bin/acs-amq-dnsupdate.py /usr/local/bin/acs-amq-dnsupdate.py
+install --mode=0640 --owner=root --group=root conf/acs-amq-dnsupdate /etc/default/acs-amq-dnsupdate
+install --mode=640 --owner=root --group=root conf/acs-amq-dnddsupdate.json /etc/acs-amq-dnsupdate.json
+install --mode=644 --owner=root --group=root systemd/acs-amq-dnsupdate.service /etc/systemd/system/acs-amq-dnsupdate.service
+systemctl daemon-reload
+# doing the cloudstack configuration ( http://docs.cloudstack.apache.org/en/latest/adminguide/events.html )
+systemctl restart cloudstack-management
+systemctl enable --now acs-amq-dnsupdate.service
+journalctl -f acs-aqm-dnsupdate.service
+```
+
+There's also a [doc](doc/) directory with additional informations.
 
 ### How is it done?
 
